@@ -1,27 +1,21 @@
 // Liberapp 2019 - Tahiti Katagai
 // ゲームシーン
 
-const PIXEL_PER_METER = 1;
 const GAME_AREA_H_PER_W = 1.2;      // fixedWidth 100x120 (width基準)
-const THREAD_WIDTH_PER_W = 1/256;
+const PLAYER_RADIUS_PER_W = 1/96;
 const PLAYER_SPEED_PER_W = 1/180;
-const RISE_POWER_PER_W = (1/2000);
+const JUMP_POWER_PER_W = (1/2000);
 
-const PILLAR_WIDTH_PER_W = 1/32;
-const PILLAR_INTER_PER_W = 1/2;
-const PILLAR_HOLE_MAX_PW:number = 0.25;
-const PILLAR_HOLE_MIN_PW:number = 0.13;
+const LAND_S_PW = 1/8;
+const LAND_M_PW = 1/8;
+const LAND_L_PW = 1/8;
 
-const CAVE_WIDTH_PER_W = 1/2;
-const CAVE_INTER_PER_W = CAVE_WIDTH_PER_W * 2;
-const CAVE_HOLE_MAX_PW:number = 0.30;
-const CAVE_HOLE_MIN_PW:number = 0.13;
-
+const PIXEL_PER_METER = 1;
 const PHYSICS_GROUP_PLAYER = 1<<1;
 const PHYSICS_GROUP_OBSTACLE = 1<<2;
 const PHYSICS_GRAVITY_PER_H = 0.01;
 
-const SAVE_KEY_BESTSCORE = "thread-bestScore";
+const SAVE_KEY_BESTSCORE = "run-bestScore";
 
 const BACK_COLOR = 0x303030;    // index.htmlで設定
 const FONT_COLOR = 0xffffff;

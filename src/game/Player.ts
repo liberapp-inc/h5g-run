@@ -1,5 +1,5 @@
 // Liberapp 2019 - Tahiti Katagai
-// プレイヤー 糸
+// プレイヤー
 
 class Player extends PhysicsObject{
 
@@ -10,12 +10,8 @@ class Player extends PhysicsObject{
     y:number;
     vx:number;
     vy:number;
+    landing:boolean;
 
-    readonly xyListMax:number = 32;
-    readonly xyListStep:number = 2;
-    xyList:number[][]; //[Player.xyListMax][2];
-    xyIndex:number = 0;
-    
     button:Button;
     state:()=>void = this.stateNone;
 
@@ -23,18 +19,11 @@ class Player extends PhysicsObject{
         super();
 
         Player.I = this;
-        this.radius = Util.w(THREAD_WIDTH_PER_W);
+        this.radius = Util.w(PLAYER_RADIUS_PER_W);
         this.x = px;
         this.y = py;
         this.vx = Util.w( PLAYER_SPEED_PER_W );
         this.vy = 0;
-
-        this.xyList = [];
-        for( let i=0 ; i<this.xyListMax ; i++ ){
-            this.xyList[i] = [];
-            this.xyList[i][0] = px - i * this.vx * this.xyListStep;
-            this.xyList[i][1] = py;
-        }
 
         this.scrollCamera();
         this.setDisplay( px, py );
@@ -55,24 +44,9 @@ class Player extends PhysicsObject{
         const shape:egret.Shape = this.display as egret.Shape;
         shape.graphics.clear();
 
-        // pyList
-        this.xyIndex -= 1 / this.xyListStep;
-        if( this.xyIndex < 0 )
-            this.xyIndex += this.xyListMax;
-
-        let index = Math.floor( this.xyIndex );
-        this.xyList[index][0] = px;
-        this.xyList[index][1] = py;
-
-        shape.x = 0;
-        shape.y = 0;
-        shape.graphics.lineStyle(6, PLAYER_COLOR, 1, false, null, null, egret.JointStyle.MITER );
-        shape.graphics.moveTo( Camera2D.transX( this.xyList[index][0] ), Camera2D.transY( this.xyList[index][1] ) );
-        index = ++index % this.xyListMax;
-        for( let i=1 ; i<this.xyListMax ; i++ ){
-            shape.graphics.lineTo( Camera2D.transX( this.xyList[index][0] ), Camera2D.transY( this.xyList[index][1] ) );
-            index = ++index % this.xyListMax;
-        }
+        shape.x = this.x;
+        shape.y = this.y;
+        shape.graphics.drawCircle( 0, 0, this.radius );
     }
 
     setBody( px:number, py:number ){
@@ -115,10 +89,8 @@ class Player extends PhysicsObject{
     }
     stateMove() {
         this.vy *= 0.97;
-        if( this.button.touch ){
-            this.vy -= Util.w(RISE_POWER_PER_W);
-        }else{
-            this.vy += Util.w(RISE_POWER_PER_W);
+        if( this.landing && this.button.press ){
+            this.vy -= Util.w(JUMP_POWER_PER_W);
         }
         this.x += this.vx;
         this.y += this.vy;
@@ -132,15 +104,18 @@ class Player extends PhysicsObject{
 
     checkOut(){
         if( (this.py - Util.h(0.5))**2 > Util.w(GAME_AREA_H_PER_W*0.5)**2 )
-            this.miss();
+            this.setStateMiss();
     }
 
-    miss(){
-        if( this.state == this.stateNone )
+    setStateMiss(){
+        if( this.state == this.stateMiss )
             return;
         new GameOver();
         PhysicsObject.deltaScale = 0.1;
         egret.Tween.removeAllTweens();
         this.state = this.stateNone;
+    }
+
+    stateMiss(){        
     }
 }
