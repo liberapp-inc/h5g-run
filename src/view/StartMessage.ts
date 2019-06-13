@@ -24,7 +24,7 @@ class StartMessage extends GameObject{
     update() {}
 
     tap(e:egret.TouchEvent){
-        Player.I.setStateMove();
+        Player.I.setStateRun();
         this.destroy();
     }
 }

@@ -1,6 +1,6 @@
 // Liberapp 2019 - Tahiti Katagai
 // 背景（画面上下のゲームエリア外）
-
+/*
 class BackGround extends GameObject{
 
     constructor() {
@@ -23,3 +23,4 @@ class BackGround extends GameObject{
     update() {
     }
 }
+*/
