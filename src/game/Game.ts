@@ -2,10 +2,12 @@
 // ゲームシーン
 
 const GAME_AREA_H_PER_W = 1.2;      // fixedWidth 100x120 (width基準)
-const PLAYER_RADIUS_PER_W = 1/32;
+const PLAYER_RADIUS_PER_W = 1/48;
 const PLAYER_SPEED_PER_W = 1/120;
-const JUMP_POWER_PER_W = (1/24);
-const GRAVITY_PER_W = 0.001;
+const JUMP_POWER_PER_W = 1/80;
+const FLOATING_POWER_PER_W = 1/1600;
+const GRAVITY_PER_W = 1/1000;
+const MAX_VY_PER_W = 1/80;
 
 const LAND_S_PW = 1/8;
 const LAND_M_PW = 1/4;
