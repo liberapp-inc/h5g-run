@@ -20,10 +20,6 @@
     },
     {
       "name": "promise"
-    },
-    {
-      "name": "physics",
-      "path": "../egret-game-library-master/physics/libsrc"
     }
   ]
 }

@@ -11,8 +11,12 @@ class Player extends GameObject{
     vx:number;
     vy:number;
     landing:boolean;
-    jumping:number;
+    jumping:boolean;
+    floating:boolean;
+    jumpButtonFrame:number;
     jumpButtomY:number;
+
+    magnet:number;
 
     button:Button;
     state:()=>void = this.stateNone;
@@ -28,8 +32,10 @@ class Player extends GameObject{
         this.vy = 0;
         this.jumpButtomY = Util.h(0.5);
 
-        this.scrollCamera( 1 );
+        Camera2D.x = 0;
+        this.scrollCamera( 1, 1.7 );
         this.setDisplay( px, py );
+        Camera2D.transform( this.display );
         this.button = new Button( null, 0, 0, 0.5, 0.5, 1, 1, 0x000000, 0.0, null ); // 透明な全画面ボタン
     }
 
@@ -48,7 +54,7 @@ class Player extends GameObject{
 
         shape.x = this.x;
         shape.y = this.y;
-        shape.graphics.beginFill( LAND_COLOR );
+        shape.graphics.beginFill( PLAYER_COLOR );
         shape.graphics.drawCircle( 0, 0, this.radius );
         shape.graphics.endFill();
     }
@@ -57,9 +63,10 @@ class Player extends GameObject{
         this.state();
     }
 
-    scrollCamera( lerp:number = 1/16 ){
-        Camera2D.x = this.x - Util.w(1/4);
+    scrollCamera( lerp:number = 1/32, scale:number=1 ){
+        Camera2D.x = Math.max( this.x - Util.w(CAMERA_POSITION_X), Camera2D.x );
         // Camera2D.y += ( (this.jumpButtomY - Util.h(0.5)) - Camera2D.y ) * lerp;
+        Camera2D.scale += (scale - Camera2D.scale) * lerp;
     }
 
     setStateNone(){
@@ -85,46 +92,49 @@ class Player extends GameObject{
     }
 
     jump(){
-        if( this.jumping == 0 ){
+        if( this.button.touch ) this.jumpButtonFrame++;
+        else                    this.jumpButtonFrame = 0;
+
+        if( !this.jumping ){
             // 走り中
             if( this.landing ){
                 this.jumpButtomY = this.y;
                 if( this.button.press ){
                     this.vy = -Util.w(JUMP_POWER_PER_W);
-                    this.jumping = 1;
+                    this.jumping = true;
+                    this.floating = true;
                     this.landing = false;
                 }
             }
             else{
-                this.jumping = 1; // to fall
+                this.floating = false;
             }
         }
         else{
             // ジャンプ中
             if( this.landing == false ){
                 if( this.vy < 0 ){
-                    if( this.jumping < 2 ){
-                        if( this.button.touch ){
-                            this.vy -= Util.w(FLOATING_POWER_PER_W);
-                        }else{
-                            this.jumping = 2;
-                        }
+                    // 上昇
+                    if( this.floating ){
+                        if( this.button.touch ) this.vy -= Util.w(FLOATING_POWER_PER_W);
+                        else                    this.floating = false;
                     }
                 }
                 else{
-                    if( this.jumping == 1 ){
-                        this.jumping = 2;
-                        if( this.button.touch )
-                            console.log( "jump height" + (this.y - this.jumpButtomY).toFixed(0) );
+                    // 下降
+                    if( this.floating ){
+                        this.floating = false;
+                        if( this.button.touch ) console.log( "jump height" + (this.y - this.jumpButtomY).toFixed(0) );
                     }
                 }
             }
             else{
-                // to land
-                this.jumping = 0;
-                if( this.button.press ){
+                // 着地
+                this.jumping = false;
+                if( this.button.press || (this.button.touch && this.jumpButtonFrame <=6) ){
                     this.vy = -Util.w(JUMP_POWER_PER_W);
-                    this.jumping = 1;
+                    this.jumping = true;
+                    this.floating = true;
                     this.landing = false;
                 }
             }
@@ -133,7 +143,7 @@ class Player extends GameObject{
 
     progress( run:boolean ){
         if( run ){
-            const vxd = Util.w( PLAYER_SPEED_PER_W ) / 8;
+            const vxd = Util.w( PLAYER_SPEED_PER_W ) / 24;
             this.vx += Util.clamp( Util.w( PLAYER_SPEED_PER_W )-this.vx, -vxd, +vxd );
         }
         this.vy += Util.w(GRAVITY_PER_W);

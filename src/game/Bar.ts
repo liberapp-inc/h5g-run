@@ -60,6 +60,7 @@ class Bar extends GameObject{
 
         if( this.display.x + this.px1 < 0 ){
             this.destroy();
+            Score.I.addPoint(1);
         }
     }
 }
