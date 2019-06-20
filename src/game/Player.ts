@@ -6,6 +6,7 @@ class Player extends GameObject{
     static I:Player = null;
 
     radius:number;
+    color:number;
     x:number;
     y:number;
     vx:number;
@@ -17,6 +18,7 @@ class Player extends GameObject{
     jumpButtomY:number;
 
     magnet:number;
+    big:number;
 
     button:Button;
     state:()=>void = this.stateNone;
@@ -26,6 +28,7 @@ class Player extends GameObject{
 
         Player.I = this;
         this.radius = Util.w(PLAYER_RADIUS_PER_W);
+        this.color = PLAYER_COLOR;
         this.x = px;
         this.y = py;
         this.vx = 0;//Util.w( PLAYER_SPEED_PER_W );
@@ -34,7 +37,7 @@ class Player extends GameObject{
 
         Camera2D.x = 0;
         this.scrollCamera( 1, 1.7 );
-        this.setDisplay( px, py );
+        this.setDisplay();
         Camera2D.transform( this.display );
         this.button = new Button( null, 0, 0, 0.5, 0.5, 1, 1, 0x000000, 0.0, null ); // 透明な全画面ボタン
     }
@@ -44,7 +47,7 @@ class Player extends GameObject{
         Player.I = null;
     }
 
-    setDisplay( px:number, py:number ){
+    setDisplay(){
         let shape:egret.Shape = this.display as egret.Shape;
         if( this.display == null ){
             this.display = shape = new egret.Shape();
@@ -54,7 +57,7 @@ class Player extends GameObject{
 
         shape.x = this.x;
         shape.y = this.y;
-        shape.graphics.beginFill( PLAYER_COLOR );
+        shape.graphics.beginFill( this.color );
         shape.graphics.drawCircle( 0, 0, this.radius );
         shape.graphics.endFill();
     }
@@ -79,6 +82,8 @@ class Player extends GameObject{
         this.state = this.stateRun;
     }
     stateRun() {
+        this.itemEffect();
+
         this.checkLand();
         if( this.vx < 0 ){
             this.setStateMiss();
@@ -89,6 +94,25 @@ class Player extends GameObject{
 
         this.show();
         this.checkFall();
+    }
+
+    itemEffect(){
+        // Item Big
+        let r;
+        const rd = Util.w(PLAYER_RADIUS_PER_W) / 30;
+        if( this.big > 0 ){
+            this.big--;
+            r = Util.w(PLAYER_RADIUS_PER_W) * 2;
+        }else{
+            r = Util.w(PLAYER_RADIUS_PER_W);
+        }
+        this.radius += Util.clamp( r - this.radius, -rd, +rd );
+        
+        // Item Magnet
+        if( this.magnet > 0 ){
+            this.magnet--;
+            this.color = ((this.magnet & 4) != 0 ) ? COIN_COLOR : PLAYER_COLOR;
+        }
     }
 
     jump(){
@@ -143,8 +167,8 @@ class Player extends GameObject{
 
     progress( run:boolean ){
         if( run ){
-            const vxd = Util.w( PLAYER_SPEED_PER_W ) / 24;
-            this.vx += Util.clamp( Util.w( PLAYER_SPEED_PER_W )-this.vx, -vxd, +vxd );
+            const vxd = Util.w( PLAYER_SPEED_PER_W ) / 12;
+            this.vx += Util.clamp( Util.w(PLAYER_SPEED_PER_W)-this.vx, -vxd, +vxd );
         }
         this.vy += Util.w(GRAVITY_PER_W);
         this.vy = Math.min( this.vy, Util.w(MAX_VY_PER_W) );
@@ -154,7 +178,7 @@ class Player extends GameObject{
 
     checkLand(){
         this.landing = false;
-        let radius = this.radius * 1.25;
+        let radius = this.radius + Util.w(BAR_RADIUS_PER_W);
         Bar.bars.forEach( bar => {
             if( bar.px0 < this.x+radius && bar.px1 > this.x-radius ){
                 // 最近点
@@ -188,7 +212,7 @@ class Player extends GameObject{
 
     show(){
         this.scrollCamera();
-        this.setDisplay( this.x, this.y );
+        this.setDisplay();
         Camera2D.transform( this.display, 1 );
     }
 

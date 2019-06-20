@@ -1,18 +1,25 @@
 // Liberapp 2019 - Tahiti Katagai
-// コイン
+// アイテム
 
-class Coin extends GameObject{
+enum ItemType{
+    Big,
+    Magnet,
+}
+
+class Item extends GameObject{
 
     x:number;
     y:number;
     radius:number;
+    type:ItemType;
 
-    constructor( x:number, y:number ) {
+    constructor( x:number, y:number, type:ItemType ) {
         super();
 
         this.x = x;
         this.y = y;
-        this.radius = Util.w(COIN_RADIUS_PER_W);
+        this.radius = Util.w(ITEM_RADIUS_PER_W);
+        this.type = type;
         this.setShape(x, y);
     }
 
@@ -26,9 +33,18 @@ class Coin extends GameObject{
 
         shape.x = x;
         shape.y = y;
-        shape.graphics.beginFill( COIN_COLOR );
-        shape.graphics.drawCircle( 0, 0, this.radius );
-        shape.graphics.endFill();
+        switch( this.type ){
+            case ItemType.Big:
+            shape.graphics.lineStyle(5, BAR_COLOR);
+            shape.graphics.drawRect( -this.radius, -this.radius, this.radius*2, this.radius*2 );
+            shape.rotation = 45;
+            break;
+
+            case ItemType.Magnet:
+            shape.graphics.lineStyle(5, COIN_COLOR);
+            shape.graphics.drawCircle( 0, 0, this.radius );
+            break;
+        }
     }
 
     update() {
@@ -49,17 +65,12 @@ class Coin extends GameObject{
         let dy = Player.I.y - this.y;
         let l = dx**2 + dy**2;
         if( l <= (Player.I.radius + this.radius)**2 ){
-            Score.I.addPoint(1);
+            switch( this.type ){
+                case ItemType.Big:      Player.I.big    = ITEM_LIMIT_FRAME; break;
+                case ItemType.Magnet:   Player.I.magnet = ITEM_LIMIT_FRAME; break;
+            }
             this.destroy();
             return true;
-        }
-        // マグネット引き寄せ
-        if( Player.I.magnet > 0 ){
-            l = Math.sqrt( l );
-            let rate = 1 - Util.clamp( l / Util.w(0.25), 0, 1 );
-            l = 1 / l * rate * Util.width * 0.05;
-            this.x += dx * l;
-            this.y += dy * l;
         }
         return false;
     }

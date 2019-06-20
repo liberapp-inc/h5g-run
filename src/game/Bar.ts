@@ -49,7 +49,7 @@ class Bar extends GameObject{
         }else
             shape.graphics.clear();
         
-        shape.graphics.lineStyle(5, LAND_COLOR);
+        shape.graphics.lineStyle(5, BAR_COLOR);
         shape.graphics.moveTo(this.px0, this.py0);
         shape.graphics.lineTo(this.px1, this.py1);
     }
