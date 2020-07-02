@@ -7,7 +7,7 @@ class Rect extends GameObject{
         super();
         let shape = new egret.Shape();
         this.display = shape;
-        GameObject.display.addChild(this.display);
+        GameObject.display.addChildAt(this.display, 0);
         shape.graphics.beginFill( color, 1 );
         shape.graphics.drawRect(x, y, w, h);
         shape.graphics.endFill();

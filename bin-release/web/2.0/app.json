@@ -1,0 +1,21 @@
+{
+  "title": "ボール走",
+  "lead": "足場から落ちないように走れ！",
+  "description": "走るボールが落ちないように、うまくジャンプで足場に乗っていこう",
+
+  "useLeaderboard": true,
+  "sdkVersion": "0.9",
+  "leaderboards": [
+    {
+      "name": "default",
+      "displayName": "ハイスコア",
+      "sortOrder": "HIGHER_IS_BETTER",
+      "scoreType": "CUSTOM",
+      "unit": "pt",
+      "decimalOffset": 0
+    }
+  ],
+
+  "author": "Liberapp",
+  "copyright": "Liberapp. Created by Tahiti Katagai"
+}

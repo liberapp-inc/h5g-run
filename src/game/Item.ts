@@ -35,7 +35,7 @@ class Item extends GameObject{
         shape.y = y;
         switch( this.type ){
             case ItemType.Big:
-            shape.graphics.lineStyle(5, BAR_COLOR);
+            shape.graphics.lineStyle(5, COIN_COLOR);
             shape.graphics.drawRect( -this.radius, -this.radius, this.radius*2, this.radius*2 );
             shape.rotation = 45;
             break;

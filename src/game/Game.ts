@@ -33,8 +33,8 @@ const BAR_COLOR   = 0x940F1C;
 class Game {
 
     static loadSceneGamePlay() {
-        new Rect( 0, 0, Util.width, Util.h(0.4), SKY_COLOR);
-        new Rect( 0, Util.h(0.4), Util.width, Util.h(0.1), BACK_COLOR2);
+        new Rect( 0, 0, Util.width, Util.h(0.5), SKY_COLOR);
+        new Rect( 0, Util.h(0.5), Util.width, Util.h(0.1), BACK_COLOR2);
         new Player( Util.w(1/4), Util.h(0.5) );
         new Wave();
         new StartMessage();
